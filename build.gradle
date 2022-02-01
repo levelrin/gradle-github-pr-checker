@@ -1,0 +1,148 @@
+plugins {
+    id 'jacoco'
+    id 'com.github.spotbugs' version '4.7.2'
+    id 'pmd'
+    id 'checkstyle'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+group 'com.levelrin'
+version '0.1.0'
+
+sourceCompatibility = 1.15
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation 'net.jcip:jcip-annotations:1.0'
+    implementation 'com.github.spotbugs:spotbugs-annotations:4.4.2'
+    implementation 'org.jetbrains:annotations:22.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'org.mockito:mockito-core:4.0.0'
+}
+
+test {
+    useJUnitPlatform()
+    dependsOn 'cleanTest'
+    testLogging {
+        events 'skipped', 'failed'
+        exceptionFormat = 'full'
+    }
+}
+
+jacoco {
+    toolVersion = '0.8.7'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                enabled = true
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.90000
+            }
+            limit {
+                enabled = true
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.90000
+            }
+            limit {
+                enabled = true
+                counter = 'COMPLEXITY'
+                value = 'COVEREDRATIO'
+                minimum = 0.90000
+            }
+            limit {
+                enabled = true
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.90000
+            }
+            limit {
+                enabled = true
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.90000
+            }
+            limit {
+                enabled = true
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.90000
+            }
+        }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+check.dependsOn jacocoTestCoverageVerification
+check.dependsOn jacocoTestReport
+
+spotbugs {
+    toolVersion = '4.3.0'
+    ignoreFailures = false
+    effort = 'max'
+    excludeFilter = file('config/spotbugs/exclude.xml')
+}
+spotbugsMain {
+    reports {
+        html {
+            required = true
+            destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+spotbugsTest {
+    reports {
+        html {
+            required = true
+            destination = file("$buildDir/reports/spotbugs/test/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+pmd {
+    toolVersion = '6.31.0'
+    ignoreFailures = false
+    ruleSetFiles = files('config/pmd/ruleSet.xml')
+    ruleSets = []
+}
+tasks.withType(Pmd) {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+checkstyle {
+    toolVersion '8.41'
+    ignoreFailures = false
+    configFile = file('config/checkstyle/checkstyle.xml')
+    configProperties = [
+        'checkstyle.header.file': file('config/checkstyle/java.header'),
+        'checkstyle.suppression.file': file('config/checkstyle/suppression.xml')
+    ]
+}
+tasks.withType(Checkstyle) {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}

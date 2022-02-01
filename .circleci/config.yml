@@ -1,0 +1,27 @@
+version: 2.1
+jobs:
+  build:
+    machine:
+      image: ubuntu-2004:202010-01
+    working_directory: ~/gradle-github-pr-checker
+    steps:
+      - checkout
+      - run:
+          name: Run the Docker container using the openjdk17 image. The build folder is shared so we can upload the coverage report.
+          command: docker run --name ci -v $(pwd)/build:/usr/src/myapp/build -it -d openjdk:17.0.1-slim-bullseye /bin/bash
+      - run:
+          name: Copy the source code into the container.
+          command: docker cp . ci:/usr/src/myapp
+      - run:
+          name: Run the build command.
+          command: docker exec -w /usr/src/myapp ci ./gradlew build
+      - run:
+          name: Stop the container.
+          command: docker stop ci
+      - run:
+          name: Remove the container.
+          command: docker rm ci
+      - run:
+          name: Upload the coverage report to codecov.io.
+          command: bash <(curl -s https://codecov.io/bash)
+          when: on_success
