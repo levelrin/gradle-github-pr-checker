@@ -7,4 +7,6 @@
 <suppressions>
     <!-- Suppress rules for test files. -->
     <suppress files=".*[\\/]src[\\/](test)[\\/]" checks="MethodName"/>
+    <suppress files=".*[\\/]src[\\/](test)[\\/]" checks="MethodLength"/>
+    <suppress files=".*[\\/]src[\\/](test)[\\/]" checks="FileLength"/>
 </suppressions>

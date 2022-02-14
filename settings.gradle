@@ -1,1 +1,13 @@
+// This is for local testing.
+// It's a configuration for consumers.
+// Please add this configuration after you published the plugin to the specified directory.
+/*pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url = "$rootDir/build/repo"
+        }
+    }
+}*/
+
 rootProject.name = 'gradle-github-pr-checker'
