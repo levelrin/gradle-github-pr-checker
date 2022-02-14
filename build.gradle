@@ -1,10 +1,15 @@
 plugins {
     id 'jacoco'
-    id 'com.github.spotbugs' version '4.7.2'
+    id 'com.github.spotbugs' version '5.0.5'
     id 'pmd'
     id 'checkstyle'
     id 'java-gradle-plugin'
     id 'maven-publish'
+
+    // This is for local testing.
+    // It's a configuration for consumers.
+    // Please add this after you published your plugin to the local directory.
+    //id 'com.levelrin.github-pr-checker' version '0.1.0'
 }
 
 group 'com.levelrin'
@@ -18,13 +23,14 @@ repositories {
 
 dependencies {
     implementation gradleApi()
-    implementation 'net.jcip:jcip-annotations:1.0'
-    implementation 'com.github.spotbugs:spotbugs-annotations:4.4.2'
+    implementation 'com.jayway.jsonpath:json-path:2.7.0'
+    implementation 'com.github.spotbugs:spotbugs-annotations:4.5.3'
     implementation 'org.jetbrains:annotations:22.0.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.0.0.202111291000-r'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testImplementation 'org.hamcrest:hamcrest:2.2'
-    testImplementation 'org.mockito:mockito-core:4.0.0'
+    testImplementation 'org.mockito:mockito-core:4.3.1'
 }
 
 test {
@@ -47,31 +53,31 @@ jacocoTestCoverageVerification {
                 enabled = true
                 counter = 'INSTRUCTION'
                 value = 'COVEREDRATIO'
-                minimum = 0.90000
+                minimum = 0.78787
             }
             limit {
                 enabled = true
                 counter = 'BRANCH'
                 value = 'COVEREDRATIO'
-                minimum = 0.90000
+                minimum = 0.75000
             }
             limit {
                 enabled = true
                 counter = 'COMPLEXITY'
                 value = 'COVEREDRATIO'
-                minimum = 0.90000
+                minimum = 0.80000
             }
             limit {
                 enabled = true
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.90000
+                minimum = 0.78217
             }
             limit {
                 enabled = true
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
-                minimum = 0.90000
+                minimum = 0.89473
             }
             limit {
                 enabled = true
@@ -94,7 +100,7 @@ check.dependsOn jacocoTestCoverageVerification
 check.dependsOn jacocoTestReport
 
 spotbugs {
-    toolVersion = '4.3.0'
+    toolVersion = '4.5.3'
     ignoreFailures = false
     effort = 'max'
     excludeFilter = file('config/spotbugs/exclude.xml')
@@ -103,7 +109,7 @@ spotbugsMain {
     reports {
         html {
             required = true
-            destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            outputLocation  = file("$buildDir/reports/spotbugs/main/spotbugs.html")
             stylesheet = 'fancy-hist.xsl'
         }
     }
@@ -112,7 +118,7 @@ spotbugsTest {
     reports {
         html {
             required = true
-            destination = file("$buildDir/reports/spotbugs/test/spotbugs.html")
+            outputLocation  = file("$buildDir/reports/spotbugs/test/spotbugs.html")
             stylesheet = 'fancy-hist.xsl'
         }
     }
@@ -146,3 +152,35 @@ tasks.withType(Checkstyle) {
         html.required = true
     }
 }
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'com.levelrin.github-pr-checker'
+            implementationClass = 'com.levelrin.gradle.github.pr.checker.GitHubPrPlugin'
+        }
+    }
+}
+
+// This is for local testing.
+// It's a configuration for producers.
+// The 'publish' task will generate the consumable plugin files in the specified directory.
+// You can add the specified directory to the Gradle repository.
+// And then, you can add the plugin id to test this plugin.
+/*publishing {
+    repositories {
+        maven {
+            url = "$buildDir/repo"
+        }
+    }
+}*/
+
+// This is for local testing.
+// It's a configuration for consumers.
+// Please generate the plugin files before adding this configuration.
+/*githubPr {
+    owner = 'flutter'
+    repo = 'flutter'
+    token = System.getenv('GITHUB_TOKEN')
+    outputDir = file "$buildDir/github-pr-checker"
+}*/
