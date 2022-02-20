@@ -8,7 +8,7 @@
 package com.levelrin.gradle.github.pr.checker.fake.api;
 
 import com.levelrin.gradle.github.pr.checker.api.ApiPulls;
-import com.levelrin.gradle.github.pr.checker.api.json.JsonPull;
+import com.levelrin.gradle.github.pr.checker.api.json.BaseJsonPull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +20,10 @@ public final class FakeApiPulls implements ApiPulls {
 
     @Override
     @SuppressWarnings({"LineLength", "PMD.ExcessiveMethodLength"})
-    public List<JsonPull> list() {
-        final List<JsonPull> result = new ArrayList<>();
+    public List<BaseJsonPull> list() {
+        final List<BaseJsonPull> result = new ArrayList<>();
         result.add(
-            new JsonPull(
+            new BaseJsonPull(
                 """
                     {
                       "url":"https://api.github.com/repos/flutter/flutter/pulls/98330",
@@ -401,7 +401,7 @@ public final class FakeApiPulls implements ApiPulls {
             )
         );
         result.add(
-            new JsonPull(
+            new BaseJsonPull(
                 """
                     {
                       "url":"https://api.github.com/repos/flutter/flutter/pulls/98305",
@@ -788,7 +788,7 @@ public final class FakeApiPulls implements ApiPulls {
             )
         );
         result.add(
-            new JsonPull(
+            new BaseJsonPull(
                 """
                     {
                       "url":"https://api.github.com/repos/flutter/flutter/pulls/98299",

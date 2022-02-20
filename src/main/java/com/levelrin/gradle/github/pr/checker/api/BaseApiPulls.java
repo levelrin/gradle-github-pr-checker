@@ -9,7 +9,7 @@ package com.levelrin.gradle.github.pr.checker.api;
 
 import com.jayway.jsonpath.JsonPath;
 import com.levelrin.gradle.github.pr.checker.GitHubPrExtension;
-import com.levelrin.gradle.github.pr.checker.api.json.JsonPull;
+import com.levelrin.gradle.github.pr.checker.api.json.BaseJsonPull;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -45,11 +45,11 @@ public final class BaseApiPulls implements ApiPulls {
     }
 
     @Override
-    public List<JsonPull> list() {
-        final List<JsonPull> result = new ArrayList<>();
+    public List<BaseJsonPull> list() {
+        final List<BaseJsonPull> result = new ArrayList<>();
         final int max = 100;
         int page = 1;
-        List<JsonPull> current;
+        List<BaseJsonPull> current;
         do {
             current = this.list(page);
             result.addAll(current);
@@ -63,7 +63,7 @@ public final class BaseApiPulls implements ApiPulls {
      * @param page The page number.
      * @return List of pull requests.
      */
-    private List<JsonPull> list(final int page) {
+    private List<BaseJsonPull> list(final int page) {
         try {
             final HttpResponse<String> response = this.http.send(
                 HttpRequest
@@ -91,10 +91,10 @@ public final class BaseApiPulls implements ApiPulls {
                 HttpResponse.BodyHandlers.ofString()
             );
             final JSONArray pulls = JsonPath.read(response.body(), "$.[*]");
-            final List<JsonPull> result = new ArrayList<>();
+            final List<BaseJsonPull> result = new ArrayList<>();
             for (final Object pull : pulls) {
                 result.add(
-                    new JsonPull(
+                    new BaseJsonPull(
                         JsonPath.parse(pull).jsonString()
                     )
                 );

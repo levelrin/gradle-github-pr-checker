@@ -5,23 +5,24 @@
  * See the details at https://github.com/levelrin/gradle-github-pr-checker/blob/main/LICENSE
  */
 
-package com.levelrin.gradle.github.pr.checker.api.json;
+package com.levelrin.gradle.github.pr.checker.fake.api.json;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Test;
+import com.levelrin.gradle.github.pr.checker.api.json.BaseJsonPull;
+import com.levelrin.gradle.github.pr.checker.api.json.JsonBase;
+import com.levelrin.gradle.github.pr.checker.api.json.JsonHead;
+import com.levelrin.gradle.github.pr.checker.api.json.JsonPull;
 
 /**
- * The test of {@link JsonPull}.
+ * It represents the JSON of a pull request for testing.
  */
-final class JsonPullTest {
+public final class FakeJsonPull implements JsonPull {
 
     /**
-     * It's a fake JSON for testing.
-     * It represents a pull request information from GitHub.
+     * This is the fake data.
      */
     @SuppressWarnings("LineLength")
-    private static final String JSON = """
+    private final JsonPull origin = new BaseJsonPull(
+        """
         {
            "url":"https://api.github.com/repos/octocat/Hello-World/pulls/1347",
            "id":1,
@@ -555,31 +556,27 @@ final class JsonPullTest {
            "deletions":3,
            "changed_files":5
         }
-        """;
+        """
+    );
 
-    @Test
-    public void shouldParseNumber() {
-        final int expected = 1347;
-        MatcherAssert.assertThat(
-            new JsonPull(JSON).number(),
-            CoreMatchers.equalTo(expected)
-        );
+    @Override
+    public int number() {
+        return this.origin.number();
     }
 
-    @Test
-    public void shouldParseHead() {
-        MatcherAssert.assertThat(
-            new JsonPull(JSON).head(),
-            CoreMatchers.instanceOf(JsonHead.class)
-        );
+    @Override
+    public JsonHead head() {
+        return this.origin.head();
     }
 
-    @Test
-    public void shouldReturnRawJsonWhenToStringMethodIsUsed() {
-        MatcherAssert.assertThat(
-            new JsonPull(JSON).toString(),
-            CoreMatchers.equalTo(JSON)
-        );
+    @Override
+    public JsonBase base() {
+        return this.origin.base();
+    }
+
+    @Override
+    public String toString() {
+        return this.origin.toString();
     }
 
 }

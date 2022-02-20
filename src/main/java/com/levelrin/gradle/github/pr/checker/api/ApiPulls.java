@@ -7,7 +7,7 @@
 
 package com.levelrin.gradle.github.pr.checker.api;
 
-import com.levelrin.gradle.github.pr.checker.api.json.JsonPull;
+import com.levelrin.gradle.github.pr.checker.api.json.BaseJsonPull;
 import java.util.List;
 
 /**
@@ -21,6 +21,6 @@ public interface ApiPulls {
      * It will fetch all the pull requests even if there are multiple pages.
      * @return List of JSON objects.
      */
-    List<JsonPull> list();
+    List<BaseJsonPull> list();
 
 }

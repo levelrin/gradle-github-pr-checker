@@ -8,6 +8,7 @@
 package com.levelrin.gradle.github.pr.checker;
 
 import com.levelrin.gradle.github.pr.checker.api.BaseApiPulls;
+import com.levelrin.gradle.github.pr.checker.task.GenerateCommitList;
 import com.levelrin.gradle.github.pr.checker.task.GenerateRawPrInfo;
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -23,13 +24,16 @@ import org.jetbrains.annotations.NotNull;
 public final class GitHubPrPlugin implements Plugin<Project> {
 
     @Override
+    @SuppressWarnings("ExecutableStatementCount")
     public void apply(final @NotNull Project project) {
         final GitHubPrExtension extension = project.getExtensions().create(
             "githubPr",
             GitHubPrExtension.class
         );
-        project.getTasks().register("generateRawPrInfo", GenerateRawPrInfo.class, task -> {
-            task.setGroup("github pr");
+        final String githubGroup = "github pr";
+        final String prTask = "generateRawPrInfo";
+        project.getTasks().register(prTask, GenerateRawPrInfo.class, task -> {
+            task.setGroup(githubGroup);
             task.constructor(
                 new BaseApiPulls(
                     HttpClient.newHttpClient(),
@@ -55,6 +59,12 @@ public final class GitHubPrPlugin implements Plugin<Project> {
             task.getOwner().set(extension.getOwner().get());
             task.getRepo().set(extension.getRepo().get());
             task.getToken().set(extension.getToken().get());
+            task.getOutputDir().set(extension.getOutputDir());
+        });
+        project.getTasks().register("generateCommitList", GenerateCommitList.class, task -> {
+            task.setGroup(githubGroup);
+            task.dependsOn(prTask);
+            task.constructor(project.getRootDir().toString());
             task.getOutputDir().set(extension.getOutputDir());
         });
     }
