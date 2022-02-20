@@ -9,9 +9,10 @@ package com.levelrin.gradle.github.pr.checker.task;
 
 import com.levelrin.gradle.github.pr.checker.GitHubPrExtension;
 import com.levelrin.gradle.github.pr.checker.api.ApiPulls;
-import com.levelrin.gradle.github.pr.checker.api.json.JsonPull;
+import com.levelrin.gradle.github.pr.checker.api.json.BaseJsonPull;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -89,7 +90,8 @@ public abstract class GenerateRawPrInfo extends DefaultTask {
                             )
                         )
                     ),
-                    content
+                    content,
+                    StandardCharsets.UTF_8
                 );
             } catch (final IOException exception) {
                 throw new IllegalStateException(
@@ -149,9 +151,9 @@ public abstract class GenerateRawPrInfo extends DefaultTask {
     public void run() {
         // We will store the matched pull request here.
         // The matched one represents the target pull request.
-        final List<JsonPull> matched = new ArrayList<>(1);
+        final List<BaseJsonPull> matched = new ArrayList<>(1);
         final String sha = this.headSha.get();
-        for (final JsonPull pull : this.pulls.list()) {
+        for (final BaseJsonPull pull : this.pulls.list()) {
             if (pull.head().sha().equals(sha)) {
                 matched.add(pull);
                 break;

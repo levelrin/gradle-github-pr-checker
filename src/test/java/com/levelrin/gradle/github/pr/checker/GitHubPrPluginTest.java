@@ -41,4 +41,19 @@ final class GitHubPrPluginTest {
         );
     }
 
+    @Test
+    public void generateCommitListTaskShouldBeRegistered() {
+        final Project project = ProjectBuilder.builder().build();
+        new GitHubPrPlugin().apply(project);
+        final Task task = project.getTasks().getByName("generateCommitList");
+        MatcherAssert.assertThat(
+            task.getGroup(),
+            CoreMatchers.equalTo("github pr")
+        );
+        MatcherAssert.assertThat(
+            task.getDependsOn().contains("generateRawPrInfo"),
+            CoreMatchers.equalTo(true)
+        );
+    }
+
 }

@@ -7,49 +7,27 @@
 
 package com.levelrin.gradle.github.pr.checker.api.json;
 
-import com.jayway.jsonpath.JsonPath;
-import java.util.Map;
-
 /**
  * It represents the JSON of a pull request.
  */
-public final class JsonPull {
-
-    /**
-     * A pull request information from GitHub.
-     */
-    private final String raw;
-
-    /**
-     * Constructor.
-     * @param raw See {@link JsonPull#raw}.
-     */
-    public JsonPull(final String raw) {
-        this.raw = raw;
-    }
+public interface JsonPull {
 
     /**
      * Parse and return the pull request number.
      * @return Pull request number.
      */
-    public int number() {
-        return JsonPath.read(this.raw, "$.number");
-    }
+    int number();
 
     /**
      * Parse and return the object that represents the 'head' value.
      * @return The 'head' value.
      */
-    public JsonHead head() {
-        final Map<String, Object> json = JsonPath.read(this.raw, "$.head");
-        return new JsonHead(
-            JsonPath.parse(json).jsonString()
-        );
-    }
+    JsonHead head();
 
-    @Override
-    public String toString() {
-        return this.raw;
-    }
+    /**
+     * Parse and return the object that represents the 'base' value.
+     * @return The 'base' value.
+     */
+    JsonBase base();
 
 }
